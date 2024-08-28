@@ -13,6 +13,10 @@
     <link rel="stylesheet" href="{{ asset('adm/plugins/fontawesome-free/css/all.min.css') }}">
     <!-- Theme style -->
     <link rel="stylesheet" href="{{ asset('adm/dist/css/adminlte.min.css') }}">
+    <!-- DataTables -->
+    <link rel="stylesheet" href="{{ 'adm/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' }}">
+    <link rel="stylesheet" href="{{ 'adm/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' }}">
+    <link rel="stylesheet" href="{{ 'adm/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' }}">
 </head>
 
 <body class="hold-transition sidebar-mini">
@@ -62,6 +66,7 @@
                         </div>
                     </div>
                     <div class="card-body">
+                        @include('sweetalert::alert')
                         @yield('content')
                     </div>
                     <!-- /.card-body -->
@@ -101,8 +106,40 @@
     <script src="{{ 'adm/dist/js/adminlte.min.js' }}"></script>
     <!-- AdminLTE for demo purposes -->
     <script src="{{ 'adm/dist/js/demo.js' }}"></script>
+    @include('sweetalert::alert', ['cdn' => 'https://cdn.jsdelivr.net/npm/sweetalert2@9'])
+    <!-- DataTables  & Plugins -->
+    <script src="{{ asset('adm/plugins/datatables/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('adm/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
+    <script src="{{ asset('adm/plugins/datatables-responsive/js/dataTables.responsive.min.js') }}"></script>
+    <script src="{{ asset('adm/plugins/datatables-responsive/js/responsive.bootstrap4.min.js') }}"></script>
+    <script src="{{ asset('adm/plugins/datatables-buttons/js/dataTables.buttons.min.js') }}"></script>
+    <script src="{{ asset('adm/plugins/datatables-buttons/js/buttons.bootstrap4.min.js') }}"></script>
+    <script src="{{ asset('adm/plugins/jszip/jszip.min.js') }}"></script>
+    <script src="{{ asset('adm/plugins/pdfmake/pdfmake.min.js') }}"></script>
+    <script src="{{ asset('adm/plugins/pdfmake/vfs_fonts.js') }}"></script>
+    <script src="{{ asset('adm/plugins/datatables-buttons/js/buttons.html5.min.js') }}"></script>
+    <script src="{{ asset('adm/plugins/datatables-buttons/js/buttons.print.min.js') }}"></script>
+    <script src="{{ asset('adm/plugins/datatables-buttons/js/buttons.colVis.min.js') }}"></script>
 
     <script>
+        $(function() {
+            $("#example1").DataTable({
+                "responsive": true,
+                "lengthChange": false,
+                "autoWidth": false,
+                "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+            }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+            $('#example2').DataTable({
+                "paging": true,
+                "lengthChange": false,
+                "searching": false,
+                "ordering": true,
+                "info": true,
+                "autoWidth": false,
+                "responsive": true,
+            });
+        });
+
         let no = 1; // Inisialisasi nomor baris
 
         $('#category_id').change(function() {
@@ -157,23 +194,40 @@
 
             let newRow = "<tr>";
             newRow += "<td>" + (no++) + "</td>";
-            newRow += "<td>" + product_name + "</td>";
+            newRow += `<td>${product_name}<input type='hidden' name='product_id[]' value=${product_id}></td>`;
             newRow += "<td>" + product_price.toLocaleString('id-ID') + "</td>";
-            newRow += "<td>" + product_qty + "</td>";
-            newRow += "<td>" + subTotal + " <input type='hidden' class='sub_total_val' value=''> </td>";
+            newRow += "<td>" + product_qty + " <input type='hidden' name='qty[]' value='" + product_qty + "'></td>";
+            newRow += "<td>" + subTotal.toLocaleString("id-ID") +
+                " <input type='hidden' name='sub_total_val[]' class='sub_total_val' value='" + subTotal + "'></td>";
             newRow += "</tr>";
 
             $('tbody').append(newRow);
+            calculateChange()
 
-            let totalNya = 0;
+            let total = 0;
             $('.sub_total_val').each(function() {
                 let subTotal = parseFloat($(this).val()) || 0;
-                totalNya += subTotal;
-                console.log(totalNya);
+                total += subTotal;
+                console.log(total);
 
             });
 
-            $('.total_price').text(totalNya.toLocaleString('id-ID'));
+            $('.total_price').text(total.toLocaleString('id-ID'));
+            $('#total_price_val').val(total);
+        });
+
+        function calculateChange() {
+            let total = parseFloat($('#total_price_val').val() || 0);
+            let dibayar = parseFloat($('#dibayar').val() || 0);
+            let kembali = dibayar - total;
+            console.log(kembali);
+
+            $('.kembalian_text').text(kembali)
+            $('#kembalian').val(kembali)
+        }
+
+        $('#dibayar').on('change', function() {
+            calculateChange();
         });
     </script>
 

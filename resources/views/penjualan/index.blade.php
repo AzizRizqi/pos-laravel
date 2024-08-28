@@ -2,12 +2,15 @@
 @section('title', 'Transaksi Penjualan')
 
 @section('content')
-    <form action="" method="post">
+
+    <form action="{{ route('penjualan.store') }}" method="post">
+        @csrf
         <div class="row">
             <div class="col-sm-6">
                 <div class="mb-3">
                     <label for="">Kode Transaksi</label>
-                    <input type="text" class="form-control" readonly value="" name="kode_transaksi">
+                    <input type="text" class="form-control" readonly value="{{ $kode_transaksi ?? '' }}"
+                        name="kode_transaksi">
                 </div>
             </div>
             <div class="col-sm-6">
@@ -19,8 +22,8 @@
             </div>
             <div class="col-sm-6">
                 <div class="mb-3">
-                    <label for="">Kategori Produk</label>
-                    <select name="category_id" id="category_id" class="form-control">
+                    <label for="">Kategori Produk *</label>
+                    <select required name="category_id" id="category_id" class="form-control">
                         <option value="">pilih category produk</option>
                         @foreach ($categories as $cat)
                             <option value="{{ $cat->id }}">{{ $cat->category_name }}</option>
@@ -28,15 +31,15 @@
                     </select>
                 </div>
                 <div class="mb-3">
-                    <label for="">Qty produk</label>
+                    <label required for="">Qty produk *</label>
                     <input type="number" class="form-control" value="" name="product_qty" id="product_qty"
                         placeholder="Qty produk">
                 </div>
             </div>
             <div class="col-sm-6">
                 <div class="mb-3">
-                    <label for="">Nama Produk</label>
-                    <select id="product_id" name="product_id" class="form-control">
+                    <label for="">Nama Produk *</label>
+                    <select required id="product_id" name="product_id" class="form-control">
                         <option value="">Pilih Produk</option>
                     </select>
                 </div>
@@ -71,6 +74,7 @@
                 </div>
                 <div class="col-sm-4">
                     <h4 class="total_price"></h4>
+                    <input type="hidden" name="total_price" id="total_price_val">
                 </div>
             </div>
             <div class="row mb-3">
@@ -78,7 +82,7 @@
                     <h3>dibayar</h3>
                 </div>
                 <div class="col-sm-4">
-                    <h4 type="text" class="form-control"></h4>
+                    <input required type="number" class="form-control" id="dibayar" name="dibayar">
                 </div>
             </div>
 
@@ -87,8 +91,12 @@
                     <h3>kembali</h3>
                 </div>
                 <div class="col-sm-4">
-                    <h4 type="text" readonly id="kembalian" class="form-control"></h4>
+                    <h3 class="kembalian_text"></h3>
+                    <input type="hidden" readonly id="kembalian" name="kembalian" class="form-control">
                 </div>
+            </div>
+            <div class="mt-4" align="right">
+                <button type="submit" class="btn btn-success">Buat Pesanan</button>
             </div>
         </div>
     </form>

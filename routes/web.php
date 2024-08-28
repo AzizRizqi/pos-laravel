@@ -23,3 +23,4 @@ Route::post('action-login', [\App\Http\Controllers\LoginController::class, 'acti
 
 Route::get('get-products/{category_id}', [\App\Http\Controllers\TransactionController::class, 'getProducts']);
 Route::get('get-product/{product_id}', [\App\Http\Controllers\TransactionController::class, 'getProduct']);
+Route::get('print/{id}', [\App\Http\Controllers\TransactionController::class, 'print']);

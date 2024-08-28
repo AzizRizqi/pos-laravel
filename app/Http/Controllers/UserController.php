@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use \Illuminate\Support\Facades\Hash;
+use RealRashid\SweetAlert\Facades\Alert;
+
 class UserController extends Controller
 {
     /**
@@ -36,6 +38,7 @@ class UserController extends Controller
             'email' => $request->email,
             'password' =>Hash::make($request->password) // Hash password before storing it in database
         ]);
+        toast('Your Post as been submited!','success');
         return redirect()->to('user')->with('massage', 'Data Berhasil di simpan');
     }
 
